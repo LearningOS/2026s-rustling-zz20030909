@@ -9,8 +9,6 @@
 // Execute `rustlings hint errors6` or use the `hint` watch subcommand for a
 // hint.
 
-// I AM NOT DONE
-
 use std::num::ParseIntError;
 
 // This is a custom error type that we will be using in `parse_pos_nonzero()`.
@@ -25,15 +23,18 @@ impl ParsePosNonzeroError {
         ParsePosNonzeroError::Creation(err)
     }
     // TODO: add another error conversion function here.
-    // fn from_parseint...
+    fn from_parsein(err:ParseIntError)->ParsePosNonzeroError{
+        ParsePosNonzeroError::ParseInt(err)
+    }
 }
 
 fn parse_pos_nonzero(s: &str) -> Result<PositiveNonzeroInteger, ParsePosNonzeroError> {
     // TODO: change this to return an appropriate error instead of panicking
     // when `parse()` returns an error.
-    let x: i64 = s.parse().unwrap();
-    PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation)
-}
+    let x: i64 = s.parse().map_err(ParsePosNonzeroError::from_parsein)?;//注意这里是函数的嵌套，使用函数作为参数传入，返回一个枚举实例
+   //字符串parse 
+   PositiveNonzeroInteger::new(x).map_err(ParsePosNonzeroError::from_creation)
+}//如果是负数或者是0，再塞到一个枚举实例里面
 
 // Don't change anything below this line.
 
@@ -92,3 +93,4 @@ mod test {
         assert_eq!(parse_pos_nonzero("42"), Ok(x.unwrap()));
     }
 }
+//这是一个嵌套的箱子，ParsePosNonzeroError::Creation(CreationError::Negative)使用map_err又添加了一层。
